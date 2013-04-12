@@ -6,8 +6,13 @@ exports.setUp = function (cb) {
 			return;
 		}
 		_setup = true;
-		console.log('setUp');
-		cb();
+		var npminstall = require('./npminstall.js');
+		npminstall.begin(function (error) {
+			console.log('setUp');
+			cb();
+		});
+		
+		//cb();
 	};
 exports.tests = {
 	testa : function (test) {
