@@ -10,16 +10,16 @@ var Detect = (function () {
   my.prototype = {
     parse : function (configuration, cb) {
       if (configuration) {
-        console.log(configuration);
         for (var key in configuration) {
           var detector = my.types[key];
 
           if (detector) {
             detector.begin(configuration, cb);
-            break;
+            return;
           }
         }
       }
+      cb('Invalid Configuration');
     }
   };
 

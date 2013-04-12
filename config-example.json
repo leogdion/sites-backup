@@ -1,0 +1,8 @@
+{
+	"directories" : [
+		{ "parent" : "examples" }
+	],
+	"database" : {
+		"user" : "root"
+	}
+}

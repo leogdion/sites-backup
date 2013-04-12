@@ -7,9 +7,10 @@ var DirectoryDetect = (function () {
     begin : function (configuration, cb) {
       for (var key in configuration) {
         var value = configuration[key];
-        console.log(value);
-        break;
+        cb(undefined, [configuration]);
+        return;
       }
+      console.log('test');
       cb();
     }
   };

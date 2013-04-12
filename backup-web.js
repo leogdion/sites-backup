@@ -2,29 +2,49 @@ var exec = require('child_process').exec
 
 process.chdir(__dirname);
 
-exec('npm install', {env: process.env} , function (error, stdout, stderr) {
+var backup = function (configurationPath) {
+
+};
+
+backup.prototype = {
+  start : function (error) {
     if (error) {
       console.log('exec error: ' + error);
       process.exit(1);
     }
 
+    var configreader = require('./ConfigReader.js');
+
+    configreader.get( this.ongetconfiguration.bind(this));
+  },
+  ongetconfiguration : function (error, config) {
+    if (error) {
+      console.log(error);
+      process.exit(1);
+    }
+
     var async = require('async'),
-      fs = require('fs'),
-      configreader = require('./ConfigReader.js'),
       detect = require('./Detect.js');
 
-    configreader.get( function (error, config) {
-      if (error) {
-        console.log(error);
-        process.exit(1);
-      }
+    async.concat(config.directories, detect.parse, this.backupall.bind(this));
+  //  config.directories.each()
+  },
+  backupall : function (error, results) {
+    console.log(results);
+  }
+};
 
-      async.each(config.directories, detect.parse, function (error) {
-        console.log(error);
-      });
-    //  config.directories.each()
-    });
-});
+backup.oninstall = function (configurationPath, error, stdout, stderr) {
+  var b = new backup(configurationPath);
+  b.start(error, stdout, stderr);
+};
+
+backup.start = function (configurationPath) {
+  exec('npm install', {env: process.env}, backup.oninstall.bind(undefined, configurationPath));
+};
+
+backup.start('./config.json');
+
   /*
 install.stdout.on('data', function (data) {
   console.log(data.toString());
