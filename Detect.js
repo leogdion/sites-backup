@@ -26,4 +26,5 @@ var Detect = (function () {
   return my;  
 })();
 
+
 module.exports = new Detect();

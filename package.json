@@ -3,6 +3,9 @@
 	"version" : "0.0.1",
 	"dependencies" : {
 		"aws-sdk" : "*",
-		"async" : "*"
+		"async" : "*",
+		"fstream" : "*",
+		"tar" : "*",
+		"fstream" : "*",
 	}
 }
