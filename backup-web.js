@@ -1,4 +1,4 @@
-var exec = require('child_process').exec
+var npminstall = require('./npminstall.js');
 
 process.chdir(__dirname);
 
@@ -40,7 +40,7 @@ backup.oninstall = function (configurationPath, error, stdout, stderr) {
 };
 
 backup.start = function (configurationPath) {
-  exec('npm install', {env: process.env}, backup.oninstall.bind(undefined, configurationPath));
+  npminstall.begin(backup.oninstall.bind(undefined, configurationPath));
 };
 
 backup.start('./config.json');
