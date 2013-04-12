@@ -1,11 +1,12 @@
 var fs = require('fs'),
+  path = require('path'), 
   async = require('async');
 
 var ParentDetect = (function () {
   var directorydetect = require('./DirectoryDetect.js');
 
   function begindetect (file, cb) {
-    fs.stat(file, function (error, stats) {
+    fs.stat(path.resolve(file, function (error, stats) {
       if (error) {
         console.log(error);
         cb(error);
@@ -20,13 +21,13 @@ var ParentDetect = (function () {
     });
   }
 
-  function onreaddir (cb, error, files) {
+  function onreaddir (cb, parent, error, files) {
     if (error) {
       console.log(error);
       process.exit(1);
     }
-
-    async.each(files, begindetect, cb);
+    async.map(files, function ()
+    async.each(, begindetect, cb);
   }
 
 
@@ -38,7 +39,7 @@ var ParentDetect = (function () {
     begin : function (configuration, cb) {
       for (var key in configuration) {
         var value = configuration[key];
-        fs.readdir(value, onreaddir.bind(undefined, cb));
+        fs.readdir(value, onreaddir.bind(undefined, cb, value));
         break;
       }
     }
