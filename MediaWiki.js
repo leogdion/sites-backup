@@ -1,18 +1,6 @@
 var MediaWiki = (function () {
-  var fs = require('fs'),
-    path = require('path');
-    
-  var my = function () {
-
-  };
-
-  my.prototype = {  	
-    evaluate : function (dirPath, cb) {
-      fs.exists(path.resolve(dirPath, 'LocalSettings.php'), cb);
-    }
-  };
-
-  return my;  
+  var my = require('./BaseWeb.js').build('LocalSettings.php', /\$wgDBname \= \"([^"]+)\"/);
+  return my; 
 })();
 
 module.exports = new MediaWiki();

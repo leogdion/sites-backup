@@ -59,7 +59,7 @@ backup.prototype = {
     wrench.copyDirRecursive(configuration.directory, path.resolve(configuration.tmpDir, 'web'), this.parseDb.bind(this, configuration ,cb));
   },
   parseDb : function (configuration, cb, error, files) {
-    cb(undefined, configuration);
+    configuration.web.parse(configuration, cb);
   },
   backupdb : function (error, results) {
     console.log(results);
