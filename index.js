@@ -2,6 +2,8 @@ var npminstall = require('./npminstall.js');
 
 process.chdir(__dirname);
 
+npminstall.begin('./backup.js', './config.json');
+/*
 function makeid()
 {
   var text = "";
@@ -73,27 +75,4 @@ backup.start = function (configurationPath) {
 };
 
 backup.start('./config.json');
-
-  /*
-install.stdout.on('data', function (data) {
-  console.log(data.toString());
-});
-
-install.stderr.on('data', function (data) {
-  console.log(data.toString());
-});
-
-install.on('exit', function (code, signal) {
-
-  var async = require('async');
-
- 
-
-});
 */
-// 1. read config
-//  if no config, report error
-// 2. parse directories for path and type
-// 3. backup each directory and mysql db
-
-

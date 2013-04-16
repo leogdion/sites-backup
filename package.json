@@ -7,5 +7,6 @@
 		"fstream" : "*",
 		"tar" : "*",
 		"fstream" : "*",
+		"wrench" : "*"
 	}
 }
