@@ -4,7 +4,8 @@ var os = require('os'),
   wrench = require('wrench'),
   path = require('path'),
   detect = require('./Detect.js'),
-  fs = require('fs');
+  fs = require('fs'),
+  spawn = require('child_process').spawn;
 
 function makeid()
 {
@@ -37,13 +38,12 @@ backup.prototype = {
       console.log(error);
       process.exit(1);
     }
-
-
+    this.config = config;
     async.concat(config.directories, detect.parse, this.parsedball.bind(this));
   //  config.directories.each()
   },
   parsedball : function (error, results) {
-    async.map(results, this.createtemp.bind(this), this.backupdb.bind(this));
+    async.map(results, this.createtemp.bind(this), this.upload.bind(this));
   },
   createtemp : function (configuration, cb) {
     var tmpDir = path.resolve(os.tmpDir(), makeid());
@@ -59,9 +59,24 @@ backup.prototype = {
     wrench.copyDirRecursive(configuration.directory, path.resolve(configuration.tmpDir, 'web'), this.parseDb.bind(this, configuration ,cb));
   },
   parseDb : function (configuration, cb, error, files) {
-    configuration.web.parse(configuration, cb);
+    configuration.web.parse(configuration, this.backupdb.bind(this, configuration, cb));
   },
-  backupdb : function (error, results) {
+  backupdb : function (configuration, cb, error) {
+    console.log(error);
+    //mysqldump --add-drop-table -u root -p$MYSQL_PASSWORD $DB_NAME >$DUMP_PATH
+    var fd = fs.createWriteStream(path.resolve(configuration.tmpDir, 'database.sql'));
+
+    var dumpps = spawn('mysqldump', ['--add-drop-table', '-u' + this.config.database.user, '-p' + this.config.database.password, configuration.databaseName]);
+    dumpps.stdout.pipe(fd);
+    dumpps.stderr.pipe(process.stderr);
+    dumpps.on('close', this.compress.bind(this, configuration, cb));
+    //fs.open(path.resolve(configuration.tmpDir, 'database.sql'), 'ax', this.beginDump.bind(this, configuration, cb));
+  },
+  compress : function (configuration, cb, code) {
+    console.log(code);
+    cb(undefined, configuration);
+  },
+  upload : function (error, results) {
     console.log(results);
   }
 };

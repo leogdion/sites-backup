@@ -15,7 +15,7 @@ var BaseWeb = (function () {
     },
     parseFile : function (configuration, cb, error, data) {
       configuration.databaseName = data.toString().match(this.regex)[1];
-      cb(undefined, configuration);
+      cb();
     },
     build : function (configurationFile, regex) {
 	  var that = function () {};
