@@ -5,7 +5,9 @@ var os = require('os'),
   path = require('path'),
   detect = require('./Detect.js'),
   fs = require('fs'),
-  zip = require('node-native-zip'),
+  fstream = require('fstream'),
+  tar = require('tar'),
+  zlib = require('zlib'),
   spawn = require('child_process').spawn;
 
 function makeid()
@@ -73,7 +75,28 @@ backup.prototype = {
     //fs.open(path.resolve(configuration.tmpDir, 'database.sql'), 'ax', this.beginDump.bind(this, configuration, cb));
   },
   compress : function (configuration, cb, code) {
-    this.readfiles([configuration.tmpDir], this.onreaddirdone.bind(this, configuration, cb), configuration.tmpDir);
+    configuration.zipfile = path.join(os.tmpDir(), makeid() + ".tar.gz");
+    var writer = fstream.Writer({ 'path': configuration.zipfile });
+    var reader = 
+    fstream.Reader({ 'path': configuration.tmpDir, 'type': 'Directory' }) /* Read the source directory */
+    .pipe(tar.Pack()) /* Convert the directory to a .tar file */
+    .pipe(zlib.Gzip()) /* Compress the .tar file */
+    .pipe(writer);
+    /*
+    writer.on("end", function () {
+      console.log(configuration);
+      cb(undefined, configuration);
+    }); 
+    reader.on("end", function () {
+      console.log(configuration);
+      cb(undefined, configuration);
+    });
+    */ 
+      cb(undefined, configuration);
+
+
+    //cb(undefined, configuration);
+    //this.readfiles([configuration.tmpDir], this.onreaddirdone.bind(this, configuration, cb), configuration.tmpDir);
     //fs.readdir(configuration.tmpDir, this.onreaddir.bind(this, configuration, cb));
     //this.zipUpAFolder(this.this.compresscompleted.bind(this, configuration, cb));
     //console.log(code);
@@ -87,6 +110,7 @@ backup.prototype = {
     async.concat(files, this.readdir.bind(this), cb);
   },
   */
+  /*
   readfiles : function (files, cb, basePath) {
     //console.log(basePath);
     async.concat(files, this.readdir.bind(this, basePath), cb);
@@ -127,6 +151,7 @@ backup.prototype = {
   zipFileSaved : function (configuration, cb) {
     cb(undefined, configuration);
   },
+  */
   /*
   zipUpAFolder : function(dir, callback) {
       var archive = new zip();
