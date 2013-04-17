@@ -4,9 +4,7 @@
 	"dependencies" : {
 		"aws-sdk" : "*",
 		"async" : "*",
-		"fstream" : "*",
-		"tar" : "*",
-		"fstream" : "*",
-		"wrench" : "*"
+		"wrench" : "*",
+		"node-native-zip": "*"
 	}
 }
