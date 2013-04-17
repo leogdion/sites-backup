@@ -116,7 +116,15 @@ backup.prototype = {
     }
   },
   onreaddirdone : function (configuration, cb, error, files) {
-    console.log(files);
+    var archive = new zip();
+    archive.addFiles(files, this.savezip.bind(this, configuration, cb, archive));
+
+  },
+  savezip : function (configuration, cb, archive, error) {
+    configuration.zipfile = path.join(os.tmpDir(), makeid() + ".zip");
+    fs.writeFile(configuration.zipfile, archive.toBuffer(), this.zipFileSaved.bind(this, configuration, cb));
+  },
+  zipFileSaved : function (configuration, cb) {
     cb(undefined, configuration);
   },
   /*
@@ -148,7 +156,7 @@ backup.prototype = {
   },
   */
   upload : function (error, results) {
-    //console.log(results);
+    console.log(results);
   }
 };
 
