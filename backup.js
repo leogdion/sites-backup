@@ -9,6 +9,7 @@ var os = require('os'),
   cloud = require('./Cloud.js'),
   randomizer = require('./Random.js'),
   dateFormat = require('dateFormat'),
+  rmdir = require('./RmDir.js'),
   spawn = require('child_process').spawn;
 
 /*
@@ -94,7 +95,15 @@ backup.prototype = {
     async.each(results, this.deletefiles.bind(this), this.done.bind(this));
   },
   deletefiles : function (configuration, cb) {
-    cb();
+    console.log(configuration.tmpzip);
+    fs.unlink(configuration.tmpzip, this.deletefolder.bind(this, configuration.tmpDir, cb));
+  },
+  deletefolder : function (directory, cb, error) {
+    if (error) {
+      cb(error);
+      return;
+    }
+    rmdir(directory, cb);
   },
   done : function (error) {
     console.log('completed.');
