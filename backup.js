@@ -89,13 +89,12 @@ backup.prototype = {
     this.cloud.upload(configuration.tmpzip, this.filename(configuration), cb);
   },
   filename : function (configuration) {
-    return [dateFormat(this.now, "yy-mm-dd-HHMM"), path.basename(configuration.directory)].join('. ');
+    return [dateFormat(this.now, "yy-mm-dd-HHMM"), path.basename(configuration.directory), path.extname(configuration.tmpzip).substring(1)].join('.');
   },
   cleanup : function (results, error) {
     async.each(results, this.deletefiles.bind(this), this.done.bind(this));
   },
   deletefiles : function (configuration, cb) {
-    console.log(configuration.tmpzip);
     fs.unlink(configuration.tmpzip, this.deletefolder.bind(this, configuration.tmpDir, cb));
   },
   deletefolder : function (directory, cb, error) {

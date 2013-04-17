@@ -25,9 +25,8 @@ var Zip = (function () {
     },
     onstat : function (file, cb, error, stats) {
       if (error) {
-      console.log('onstat');
-        console.log(error);
         cb(error);
+        return;
       }
       if (stats.isDirectory()) {        
         fs.readdir(file, this.onreaddir.bind(this, cb, file));
@@ -37,17 +36,15 @@ var Zip = (function () {
     },
     onreaddir : function (cb, dir, error, files) {
       if (error) {
-        console.log('onreaddir');
-        console.log(error);
         cb(error);
+        return;
       }
       async.map(files, this.resolvepath.bind(this, dir), this.pathresolved.bind(this, cb));
     },
     onreadfile : function (cb, file, error, data) {
       if (error) {
-        console.log('onreadfile');
-        console.log(error);
         cb(error);
+        return;
       }
       this.zip.file(path.relative(this.directory, file), data.toString());
       cb();
@@ -57,19 +54,15 @@ var Zip = (function () {
     },
     pathresolved : function (cb, error, files) {
       if (error) {
-        console.log('pathresolved');
-        console.log(error);
         cb(error);
+        return;
       }
       this.addFiles(files, cb);      
     },
     finish : function (cb, error) {
-      console.log(this.zipfile);
       fs.writeFile(this.zipfile,  this.zip.generate({base64:false,compression:'DEFLATE'}), 'binary', this.end.bind(this, cb));
     },
     end : function (cb, error) {
-      console.log(this.zipfile);
-      console.log('done.');
       cb(error, this.zipfile);
     }
   };
