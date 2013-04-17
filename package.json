@@ -5,7 +5,7 @@
 		"aws-sdk" : "*",
 		"async" : "*",
 		"wrench" : "*",
-		"node-native-zip": "*",
-		"node-zip": "*"
+		"node-zip": "*",
+		"dateFormat" : "*"
 	}
 }

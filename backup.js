@@ -6,11 +6,12 @@ var os = require('os'),
   detect = require('./Detect.js'),
   zip = require('./Zip.js'),
   fs = require('fs'),
-  fstream = require('fstream'),
-  tar = require('tar'),
-  zlib = require('zlib'),
+  cloud = require('./Cloud.js'),
+  randomizer = require('./Random.js'),
+  dateFormat = require('dateFormat'),
   spawn = require('child_process').spawn;
 
+/*
 function makeid()
 {
   console.log('fix this...');
@@ -22,6 +23,7 @@ function makeid()
 
   return text;
 }
+*/
 
 var backup = function (configurationPath) {
 
@@ -44,16 +46,17 @@ backup.prototype = {
       process.exit(1);
     }
     this.config = config;
+    this.cloud = cloud.configure(this.config.cloud);
+    this.now = new Date();
     async.concat(config.directories, detect.parse, this.parsedball.bind(this));
   },
   parsedball : function (error, results) {
     async.map(results, this.createtemp.bind(this), this.upload.bind(this));
   },
   createtemp : function (configuration, cb) {
-    var tmpDir = path.resolve(os.tmpDir(), makeid());
+    var tmpDir = path.resolve(os.tmpDir(), randomizer());
     configuration.tmpDir = tmpDir;
     fs.mkdir(tmpDir, this.tempcreated.bind(this, configuration, cb));
-    //cb(undefined, configuration);
   },
   tempcreated : function (configuration, cb, error) {
     fs.mkdir(path.resolve(configuration.tmpDir, 'web'), this.webcreated.bind(this, configuration, cb));
@@ -79,7 +82,22 @@ backup.prototype = {
     });
   },
   upload : function (error, results) {
-    console.log(results);
+    async.eachSeries(results, this.uploadFile.bind(this), this.cleanup.bind(this, results));
+  },
+  uploadFile : function (configuration, cb) {
+    this.cloud.upload(configuration.tmpzip, this.filename(configuration), cb);
+  },
+  filename : function (configuration) {
+    return [dateFormat(this.now, "yy-mm-dd-HHMM"), path.basename(configuration.directory)].join('. ');
+  },
+  cleanup : function (results, error) {
+    async.each(results, this.deletefiles.bind(this), this.done.bind(this));
+  },
+  deletefiles : function (configuration, cb) {
+    cb();
+  },
+  done : function (error) {
+    console.log('completed.');
   }
 };
 
