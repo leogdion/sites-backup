@@ -15,15 +15,12 @@ var Zip = (function () {
       this.cb = cb;
       this.zipfile = path.join(os.tmpDir(), randomizer() + ".zip");
       this.zip = zip();
-      cb(this.zipfile);
       this.addFiles([this.directory], this.finish.bind(this, cb));
     },
     addFiles : function (files, cb) {
-      console.log(this.directory);
-      async.each(files, this.drill.bind(this), cb);
+      async.eachSeries(files, this.drill.bind(this), cb);
     },
     drill : function (file, cb) {
-      console.log(this.directory);
       fs.stat(file, this.onstat.bind(this, file, cb));
     },
     onstat : function (file, cb, error, stats) {
@@ -32,41 +29,26 @@ var Zip = (function () {
         console.log(error);
         cb(error);
       }
-      console.log('onstat');
-      console.log(this.directory);
       if (stats.isDirectory()) {        
         fs.readdir(file, this.onreaddir.bind(this, cb, file));
       } else {
         fs.readFile(file, this.onreadfile.bind(this, cb, file));
-        //console.log(basePath);
-        //console.log(file);
-        //console.log(path.relative(basePath, file));
-        //cb(undefined,  { name: path.relative(basePath, file), path: file });
       }
     },
     onreaddir : function (cb, dir, error, files) {
       if (error) {
-      console.log('onreaddir');
+        console.log('onreaddir');
         console.log(error);
         cb(error);
       }
-      console.log('onreaddir');
-      console.log(this.directory);
       async.map(files, this.resolvepath.bind(this, dir), this.pathresolved.bind(this, cb));
     },
     onreadfile : function (cb, file, error, data) {
       if (error) {
-      console.log('onreadfile');
+        console.log('onreadfile');
         console.log(error);
         cb(error);
       }
-      console.log('onreadfile');
-      if (!this.directory) {
-        process.exit(1);
-      }
-      //console.log(file);
-      //console.log(this.directoy);
-      //console.log(path.relative(this.directoy, file));
       this.zip.file(path.relative(this.directory, file), data.toString());
       cb();
     },
@@ -75,18 +57,15 @@ var Zip = (function () {
     },
     pathresolved : function (cb, error, files) {
       if (error) {
-        console.log('onreadfile');
+        console.log('pathresolved');
         console.log(error);
         cb(error);
       }
-      console.log('pathresolved');
-      console.log(this.directory);
       this.addFiles(files, cb);      
     },
     finish : function (cb, error) {
       console.log(this.zipfile);
       fs.writeFile(this.zipfile,  this.zip.generate({base64:false,compression:'DEFLATE'}), 'binary', this.end.bind(this, cb));
-      //cb(undefined, this.zipfile);
     },
     end : function (cb, error) {
       console.log(this.zipfile);
@@ -96,7 +75,6 @@ var Zip = (function () {
   };
 
   var my = function (directory, cb) {
-    console.log(directory);
     var that  = new instance(directory);
     that.begin(cb);
   };

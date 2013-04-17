@@ -45,7 +45,6 @@ backup.prototype = {
     }
     this.config = config;
     async.concat(config.directories, detect.parse, this.parsedball.bind(this));
-  //  config.directories.each()
   },
   parsedball : function (error, results) {
     async.map(results, this.createtemp.bind(this), this.upload.bind(this));
@@ -66,26 +65,18 @@ backup.prototype = {
     configuration.web.parse(configuration, this.backupdb.bind(this, configuration, cb));
   },
   backupdb : function (configuration, cb, error) {
-    //mysqldump --add-drop-table -u root -p$MYSQL_PASSWORD $DB_NAME >$DUMP_PATH
     var fd = fs.createWriteStream(path.resolve(configuration.tmpDir, 'database.sql'));
 
     var dumpps = spawn('mysqldump', ['--add-drop-table', '-u' + this.config.database.user, '-p' + this.config.database.password, configuration.databaseName]);
     dumpps.stdout.pipe(fd);
     dumpps.stderr.pipe(process.stderr);
     dumpps.on('close', this.compress.bind(this, configuration, cb));
-    //fs.open(path.resolve(configuration.tmpDir, 'database.sql'), 'ax', this.beginDump.bind(this, configuration, cb));
   },
   compress : function (configuration, cb, code) {
-    cb(undefined, configuration);
     zip(configuration.tmpDir, function(error, zipfile) {
       configuration.tmpzip = zipfile;
+      cb(undefined, configuration);
     });
-    /*
-    zip(configuration.tmpDir, function (error, zipfile) {
-      configuration.zipfile = zipfile;
-      cb(error, configuration);
-    });
-*/
   },
   upload : function (error, results) {
     console.log(results);
@@ -96,35 +87,6 @@ backup.oninstall = function (configurationPath, error, stdout, stderr) {
   var b = new backup(configurationPath);
   b.start(error, stdout, stderr);
 };
-/*
-backup.start = function (configurationPath) {
-  npminstall.begin(backup.oninstall.bind(undefined, configurationPath));
-};
-
-backup.start('./config.json');
-*/
-
 module.exports = backup;
-  /*
-install.stdout.on('data', function (data) {
-  console.log(data.toString());
-});
-
-install.stderr.on('data', function (data) {
-  console.log(data.toString());
-});
-
-install.on('exit', function (code, signal) {
-
-  var async = require('async');
-
- 
-
-});
-*/
-// 1. read config
-//  if no config, report error
-// 2. parse directories for path and type
-// 3. backup each directory and mysql db
 
 
