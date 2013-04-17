@@ -60,7 +60,6 @@ backup.prototype = {
     fs.mkdir(path.resolve(configuration.tmpDir, 'web'), this.webcreated.bind(this, configuration, cb));
   },
   webcreated : function (configuration, cb, error) {
-    console.log(configuration.tmpDir);
     wrench.copyDirRecursive(configuration.directory, path.resolve(configuration.tmpDir, 'web'), this.parseDb.bind(this, configuration ,cb));
   },
   parseDb : function (configuration, cb, error, files) {
@@ -77,10 +76,16 @@ backup.prototype = {
     //fs.open(path.resolve(configuration.tmpDir, 'database.sql'), 'ax', this.beginDump.bind(this, configuration, cb));
   },
   compress : function (configuration, cb, code) {
+    cb(undefined, configuration);
+    zip(configuration.tmpDir, function(error, zipfile) {
+      configuration.tmpzip = zipfile;
+    });
+    /*
     zip(configuration.tmpDir, function (error, zipfile) {
       configuration.zipfile = zipfile;
-      cb(error, zipfile);
+      cb(error, configuration);
     });
+*/
   },
   upload : function (error, results) {
     console.log(results);
