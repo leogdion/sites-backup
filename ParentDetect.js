@@ -26,23 +26,6 @@ var ParentDetect = (function () {
       }
     }
   };
-/*
-  function begindetect (file, cb) {
-    fs.stat(path.resolve(file, function (error, stats) {
-      if (error) {
-        console.log(error);
-        cb(error);
-        return;
-      }
-      if (stats.isDirectory()) {
-        directorydetect.begin({
-          "path" : file,
-          "optional" : true
-        }, cb);
-      }
-    });
-  }
-  */
 
   function onreaddir (cb, parent, error, files) {
     if (error) {
@@ -51,7 +34,6 @@ var ParentDetect = (function () {
     }
     var p = new parser (parent);
     async.concat(files, p.begin.bind(p), cb);
-    //async.each(, begindetect, cb);
   }
 
 
