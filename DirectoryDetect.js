@@ -21,12 +21,7 @@ var DirectoryDetect = (function () {
     test : function (value, type, cb) {
       webs[type].evaluate(value, cb);
     },
-    ondetect : function (configuration, cb, result) {/*
-      fstream.Reader({ 'path': configuration['directory'], 'type': 'Directory' }) 
-        .pipe(tar.Pack()) 
-        .pipe(zlib.Gzip())
-        .pipe(fstream.Writer({ 'path': 'compressed_folder.tar.gz' }));   
-        */
+    ondetect : function (configuration, cb, result) {
       if (result) {
         configuration.web = webs[result];
         configuration.webname = result;

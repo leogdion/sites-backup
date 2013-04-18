@@ -12,20 +12,6 @@ var os = require('os'),
   rmdir = require('./RmDir.js'),
   spawn = require('child_process').spawn;
 
-/*
-function makeid()
-{
-  console.log('fix this...');
-  var text = "";
-  var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-  for( var i=0; i < 5; i++ )
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-  return text;
-}
-*/
-
 var backup = function (configurationPath) {
 
 };
