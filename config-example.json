@@ -1,8 +1,19 @@
 {
-	"directories" : [
-		{ "parent" : "examples" }
-	],
-	"database" : {
-		"user" : "root"
-	}
+  "directories" : [
+    { "parent" : "/usr/share/nginx" }
+  ],
+  "database" : {
+    "user" : "root",
+    "password" : "*******"
+  },
+  "cloud" : {
+    "aws-s3" : {
+      "config" : {
+        "accessKeyId": "********", 
+        "secretAccessKey": "**********************"
+      },
+      "Bucket" : "bucket-name",
+      "Folder" : "path"
+    }
+  }
 }
