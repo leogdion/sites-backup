@@ -1,6 +1,6 @@
 var Zip = (function () {
   var randomizer = require('./Random.js'),
-    zip = require('node-zip'),
+    zip = require('adm-zip'),
     os = require('os'),
     async = require('async'),
     fs = require('fs'),
@@ -14,8 +14,16 @@ var Zip = (function () {
     begin : function (cb) {
       this.cb = cb;
       this.zipfile = path.join(os.tmpDir(), randomizer() + ".zip");
-      this.zip = zip();
-      this.addFiles([this.directory], this.finish.bind(this, cb));
+      this.zip = new zip();
+      this.zip.addLocalFolder(this.directory, ".");
+      this.zip.writeZip(this.zipfile);
+      //this.zip.toBuffer(this.onBuffer.bind(this, cb));
+      cb(undefined, this.zipfile);
+      //this.addFiles([this.directory], this.finish.bind(this, cb));
+    },
+    onBuffer : function (cb, buffer) {
+      console.log('writing file...');
+      fs.writeFile(this.zipfile, buffer, this.end.bind(this, cb));
     },
     addFiles : function (files, cb) {
       async.eachSeries(files, this.drill.bind(this), cb);
