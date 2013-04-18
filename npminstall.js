@@ -2,7 +2,6 @@ var exec = require('child_process').exec;
 
 module.exports = {
 	begin : function (cb) {
-		console.log('installing modules...');
 		if (typeof(cb) === 'string') {
 			var modName = cb;
 			cb = function () {
