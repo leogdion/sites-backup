@@ -6,6 +6,6 @@
 		"async" : "*",
 		"wrench" : "*",
 		"node-zip": "*",
-		"dateFormat" : "*"
+		"dateformat" : "*"
 	}
 }

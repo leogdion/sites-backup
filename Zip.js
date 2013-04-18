@@ -60,6 +60,11 @@ var Zip = (function () {
       this.addFiles(files, cb);      
     },
     finish : function (cb, error) {
+      if (error) {
+        cb(error);
+        return;
+      }
+      console.log(this.directory + ": writing file...");
       fs.writeFile(this.zipfile,  this.zip.generate({base64:false,compression:'DEFLATE'}), 'binary', this.end.bind(this, cb));
     },
     end : function (cb, error) {

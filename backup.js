@@ -8,7 +8,7 @@ var os = require('os'),
   fs = require('fs'),
   cloud = require('./Cloud.js'),
   randomizer = require('./Random.js'),
-  dateFormat = require('dateFormat'),
+  dateFormat = require('dateformat'),
   rmdir = require('./RmDir.js'),
   spawn = require('child_process').spawn;
 
@@ -32,6 +32,7 @@ backup.prototype = {
       console.log(error);
       process.exit(1);
     }
+    console.log("reading configuration...");
     this.config = config;
     this.cloud = cloud.configure(this.config.cloud);
     this.now = new Date();
@@ -49,6 +50,7 @@ backup.prototype = {
     fs.mkdir(path.resolve(configuration.tmpDir, 'web'), this.webcreated.bind(this, configuration, cb));
   },
   webcreated : function (configuration, cb, error) {
+    console.log(configuration.name + ": copying files...");
     wrench.copyDirRecursive(configuration.directory, path.resolve(configuration.tmpDir, 'web'), this.parseDb.bind(this, configuration ,cb));
   },
   parseDb : function (configuration, cb, error, files) {
@@ -58,26 +60,42 @@ backup.prototype = {
     var fd = fs.createWriteStream(path.resolve(configuration.tmpDir, 'database.sql'));
 
     var dumpps = spawn('mysqldump', ['--add-drop-table', '-u' + this.config.database.user, '-p' + this.config.database.password, configuration.databaseName]);
+    console.log(configuration.name + ": beginning database backup...");
     dumpps.stdout.pipe(fd);
     dumpps.stderr.pipe(process.stderr);
     dumpps.on('close', this.compress.bind(this, configuration, cb));
   },
   compress : function (configuration, cb, code) {
+    console.log(configuration.name + ": creating zip file...");
     zip(configuration.tmpDir, function(error, zipfile) {
+      if (error) {
+        cb(error);
+        return;
+      }
       configuration.tmpzip = zipfile;
       cb(undefined, configuration);
     });
   },
   upload : function (error, results) {
+    if (error) {
+      cb(error);
+      return;
+    }
     async.eachSeries(results, this.uploadFile.bind(this), this.cleanup.bind(this, results));
   },
   uploadFile : function (configuration, cb) {
+    console.log(configuration.name + ": uploading backup...");
     this.cloud.upload(configuration.tmpzip, this.filename(configuration), cb);
   },
   filename : function (configuration) {
     return [dateFormat(this.now, "yy-mm-dd-HHMM"), path.basename(configuration.directory), path.extname(configuration.tmpzip).substring(1)].join('.');
   },
   cleanup : function (results, error) {
+    if (error) {
+      cb(error);
+      return;
+    }
+    console.log("cleaning up...");
     async.each(results, this.deletefiles.bind(this), this.done.bind(this));
   },
   deletefiles : function (configuration, cb) {
@@ -91,6 +109,10 @@ backup.prototype = {
     rmdir(directory, cb);
   },
   done : function (error) {
+    if (error) {
+      console.log(error);
+      return;
+    }
     console.log('completed.');
   }
 };

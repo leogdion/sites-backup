@@ -1,9 +1,7 @@
 var DirectoryDetect = (function () {
   var async = require('async'),
-    webs = require('./Webs.js'),
-    fstream = require('fstream'),
-    tar = require('tar'),
-    zlib = require('zlib');
+    path = require('path'),
+    webs = require('./Webs.js');
 
   var my = function () {
 
@@ -25,6 +23,8 @@ var DirectoryDetect = (function () {
       if (result) {
         configuration.web = webs[result];
         configuration.webname = result;
+        configuration.name = path.basename(configuration.directory);
+        console.log(configuration.name + " (" + configuration.webname + ")");
         cb(undefined, [configuration]);
       } else if (configuration.optional) {
         cb(undefined, []);
