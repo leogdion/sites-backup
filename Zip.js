@@ -1,11 +1,12 @@
 var Zip = (function () {
   var randomizer = require('./Random.js'),
-    zip = require('node-zip'),
+    spawn = require('child_process').spawn,
     os = require('os'),
     async = require('async'),
     fs = require('fs'),
     path = require('path');
 
+/*
   var instance = function (directory) {
     this.directory = directory;
   };
@@ -71,10 +72,16 @@ var Zip = (function () {
       cb(error, this.zipfile);
     }
   };
-
+*/
   var my = function (directory, cb) {
-    var that  = new instance(directory);
-    that.begin(cb);
+    var zipfile = path.join(os.tmpDir(), randomizer() + ".zip");
+    var zip = spawn('zip', ['-R', zipfile, "*"], { cwd : directory });
+    zip.stderr.on('data', function (data) {
+      cb(error);
+    });
+    zip.on('close', function (code) {
+      cb(code || undefined, zipfile);
+    });
   };
 
   return my;
