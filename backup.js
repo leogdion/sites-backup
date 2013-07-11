@@ -58,8 +58,8 @@ backup.prototype = {
   },
   backupdb : function (configuration, cb, error) {
     var fd = fs.createWriteStream(path.resolve(configuration.tmpDir, 'database.sql'));
-
-    var dumpps = spawn('mysqldump', ['--add-drop-table', '-u' + this.config.database.user, '-p' + this.config.database.password, configuration.databaseName]);
+    var dbConfig = this.config.databases[configuration.host];
+    var dumpps = spawn('mysqldump', ['--add-drop-table', '-u' + dbConfig.user, '-p' + dbConfig.password, '-h' + configuration.host, configuration.databaseName]);
     console.log(configuration.name + ": beginning database backup...");
     dumpps.stdout.pipe(fd);
     dumpps.stderr.pipe(process.stderr);

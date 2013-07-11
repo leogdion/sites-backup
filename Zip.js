@@ -5,8 +5,6 @@ var Zip = (function () {
     async = require('async'),
     fs = require('fs'),
     path = require('path');
-  };
-  
 
  var my = function (directory, cb) {
     var zipfile = path.join(os.tmpDir(), randomizer() + ".zip");

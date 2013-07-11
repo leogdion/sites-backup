@@ -14,15 +14,17 @@ var BaseWeb = (function () {
       fs.readFile(path.resolve(configuration.directory, this.configurationFile), this.parseFile.bind(this, configuration, cb));
     },
     parseFile : function (configuration, cb, error, data) {
-      configuration.databaseName = data.toString().match(this.regex)[1];
+      for (var name in this.regexes) {
+        configuration[name] = data.toString().match(this.regexes[name])[1];
+      }
       cb();
     },
-    build : function (configurationFile, regex) {
-	  var that = function () {};
-	  that.prototype = new my();
-	  that.prototype.configurationFile = configurationFile;
-	  that.prototype.regex = regex;
-	  return that; 
+    build : function (configurationFile, regexes) {
+  	  var that = function () {};
+  	  that.prototype = new my();
+  	  that.prototype.configurationFile = configurationFile;
+  	  that.prototype.regexes = regexes;
+	    return that; 
     }
   };
 
