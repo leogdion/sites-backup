@@ -92,7 +92,7 @@ backup.prototype = {
   },
   cleanup : function (results, error) {
     if (error) {
-      cb(error);
+      throw error;
       return;
     }
     console.log("cleaning up...");

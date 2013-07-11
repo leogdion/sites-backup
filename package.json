@@ -2,10 +2,9 @@
 	"name" : "web-backup",
 	"version" : "0.0.1",
 	"dependencies" : {
-		"aws-sdk" : "*",
+		"knox" : "*",
 		"async" : "*",
 		"wrench" : "*",
-		"node-zip": "*",
 		"dateformat" : "*"
 	}
 }
