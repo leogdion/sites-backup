@@ -58,8 +58,8 @@ backup.prototype = {
   },
   backupdb : function (configuration, cb, error) {
     var fd = fs.createWriteStream(path.resolve(configuration.tmpDir, 'database.sql'));
-
-    var dumpps = spawn('mysqldump', ['--add-drop-table', '-u' + this.config.database.user, '-p' + this.config.database.password, configuration.databaseName]);
+    var dbConfig = this.config.databases[configuration.host];
+    var dumpps = spawn('mysqldump', ['--add-drop-table', '-u' + dbConfig.user, '-p' + dbConfig.password, '-h' + configuration.host, configuration.databaseName]);
     console.log(configuration.name + ": beginning database backup...");
     dumpps.stdout.pipe(fd);
     dumpps.stderr.pipe(process.stderr);
@@ -88,7 +88,7 @@ backup.prototype = {
     this.cloud.upload(configuration.tmpzip, this.filename(configuration), cb);
   },
   filename : function (configuration) {
-    return [dateFormat(this.now, "yy-mm-dd-HHMM"), path.basename(configuration.directory), path.extname(configuration.tmpzip).substring(1)].join('.');
+    return (configuration.stage ? configuration.stage + "." : "") + [dateFormat(this.now, "yy-mm-dd-HHMM"), path.basename(configuration.directory), path.extname(configuration.tmpzip).substring(1)].join('.');
   },
   cleanup : function (results, error) {
     if (error) {

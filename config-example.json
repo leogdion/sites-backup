@@ -2,14 +2,16 @@
   "directories" : [
     { "parent" : "/usr/share/nginx" }
   ],
-  "database" : {
-    "user" : "root",
-    "password" : "*******"
+  "databases" : {
+    "localhost" : {
+      "user" : "root",
+      "password" : "*******"
+    }
   },
   "cloud" : {
     "aws-s3" : {
       "config" : {
-        "accessKeyId": "********", 
+        "accessKeyId": "********",
         "secretAccessKey": "**********************"
       },
       "Bucket" : "bucket-name",
